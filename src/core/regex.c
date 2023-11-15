@@ -25,6 +25,9 @@ RegexErrcode regex_initialize(Regex *regex) {
 }
 
 RegexErrcode regex_finalize(Regex *regex) {
+    if (!regex) {
+        return REGEX_ERR_NULL_PTR;
+    }
     RegexGroup *iter_group = regex->groups.data;
     for (size_t i = 0; i < regex->groups.size; ++i, ++iter_group) {
         DArrayRegexToken *iter_alt = iter_group->data;

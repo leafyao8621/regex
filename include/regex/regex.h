@@ -1,9 +1,14 @@
 #ifndef REGEX_REGEX_H_
 #define REGEX_REGEX_H_
 
+#include <stdio.h>
+
 #include <regex/errcode.h>
 
 #include <containers/darray.h>
+
+#define REGEX_TOKEN_RUN_LENGTH_LAZY 0x8000000000000000
+#define REGEX_TOKEN_RUN_LENGTH_INFTY 0x7fffffffffffffff
 
 typedef enum RegexTokenType {
     REGEX_TOKEN_TYPE_SINGLE,
@@ -15,7 +20,10 @@ typedef struct RegexToken {
     union {
         struct {
             char acceptable_characters[32];
-            size_t run_length;
+            struct {
+                size_t lb;
+                size_t ub;
+            } run_length;
         } single;
         size_t group;
     } data;
@@ -39,5 +47,6 @@ typedef struct RegexMatch {
 RegexErrcode regex_initialize(Regex *regex);
 RegexErrcode regex_finalize(Regex *regex);
 RegexErrcode regex_compile(Regex *regex, char *pattern);
+RegexErrcode regex_log(Regex *regex, FILE *fout);
 
 #endif

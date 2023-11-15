@@ -36,6 +36,12 @@ printf(\
     errcode,\
     regex_err_code_lookup[errcode]\
 );\
+errcode = regex_log(&regex, stdout);\
+printf(\
+    "errcode: %d\ndescription: %s\n",\
+    errcode,\
+    regex_err_code_lookup[errcode]\
+);\
 regex_finalize(&regex);
 
 int main(void) {
@@ -46,6 +52,7 @@ int main(void) {
     regex_t regex_std;
     regmatch_t match_std[10], *iter_std;
     TEST("abcxxx", "abcxxxaa", 1)
+    TEST("abc...", "abcxxxaa", 1)
     // TEST("([0-9]{4})-(0[0-9]|1[0-2])-([0-2][0-9]|3[01])", "2023-11-15", 4);
     // TEST("([0-9]{4})-(0[0-9]|1[0-2])-([0-2][0-9]|3[01])", "2023-15-15", 4);
     // TEST("([0-9]{4})-(0[0-9]|1[0-2])-([0-2][0-9]|3[01])", "2023-11-33", 4);
