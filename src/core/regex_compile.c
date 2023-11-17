@@ -25,8 +25,133 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
         case '{':
             break;
         case '+':
+            if (state & STATE_ESCAPE) {
+                cur.type = REGEX_TOKEN_TYPE_SINGLE;
+                memset(cur.data.single.acceptable_characters, 0, 32);
+                cur.data.single.acceptable_characters['+' >> 3] |=
+                    1 << ('+' & 7);
+                state &= ~STATE_ESCAPE;
+                cur.data.single.run_length.lb = 1;
+                cur.data.single.run_length.ub = 1;
+                ret =
+                    DArrayRegexToken_push_back(
+                        &regex
+                            ->groups
+                            .data[group_idx]
+                            .data[
+                                regex
+                                    ->groups
+                                    .data[group_idx]
+                                    .size - 1
+                            ], &cur
+                    );
+                if (ret) {
+                    return REGEX_ERR_OUT_OF_MEMORY;
+                }
+                state |= STATE_QUANTIFIABLE;
+                state &= ~STATE_QUANTIFIER;
+            } else {
+                if (state & STATE_QUANTIFIER) {
+                    return REGEX_ERR_DUPLICATE_QUANTIFIER;
+                }
+                regex
+                    ->groups
+                    .data[group_idx]
+                    .data[
+                        regex
+                            ->groups
+                            .data[group_idx]
+                            .size - 1
+                    ].data[
+                        regex
+                            ->groups
+                            .data[group_idx]
+                            .data[
+                                regex
+                                    ->groups
+                                    .data[group_idx]
+                                    .size - 1
+                            ].size - 1
+                    ].data.single.run_length.ub = REGEX_TOKEN_RUN_LENGTH_INFTY;
+                if (ret) {
+                    return REGEX_ERR_OUT_OF_MEMORY;
+                }
+                state ^= STATE_QUANTIFIABLE | STATE_QUANTIFIER;
+            }
             break;
         case '*':
+            if (state & STATE_ESCAPE) {
+                cur.type = REGEX_TOKEN_TYPE_SINGLE;
+                memset(cur.data.single.acceptable_characters, 0, 32);
+                cur.data.single.acceptable_characters['*' >> 3] |=
+                    1 << ('*' & 7);
+                state &= ~STATE_ESCAPE;
+                cur.data.single.run_length.lb = 1;
+                cur.data.single.run_length.ub = 1;
+                ret =
+                    DArrayRegexToken_push_back(
+                        &regex
+                            ->groups
+                            .data[group_idx]
+                            .data[
+                                regex
+                                    ->groups
+                                    .data[group_idx]
+                                    .size - 1
+                            ], &cur
+                    );
+                if (ret) {
+                    return REGEX_ERR_OUT_OF_MEMORY;
+                }
+                state |= STATE_QUANTIFIABLE;
+                state &= ~STATE_QUANTIFIER;
+            } else {
+                if (state & STATE_QUANTIFIER) {
+                    return REGEX_ERR_DUPLICATE_QUANTIFIER;
+                }
+                regex
+                    ->groups
+                    .data[group_idx]
+                    .data[
+                        regex
+                            ->groups
+                            .data[group_idx]
+                            .size - 1
+                    ].data[
+                        regex
+                            ->groups
+                            .data[group_idx]
+                            .data[
+                                regex
+                                    ->groups
+                                    .data[group_idx]
+                                    .size - 1
+                            ].size - 1
+                    ].data.single.run_length.lb = 0;
+                regex
+                    ->groups
+                    .data[group_idx]
+                    .data[
+                        regex
+                            ->groups
+                            .data[group_idx]
+                            .size - 1
+                    ].data[
+                        regex
+                            ->groups
+                            .data[group_idx]
+                            .data[
+                                regex
+                                    ->groups
+                                    .data[group_idx]
+                                    .size - 1
+                            ].size - 1
+                    ].data.single.run_length.ub = REGEX_TOKEN_RUN_LENGTH_INFTY;
+                if (ret) {
+                    return REGEX_ERR_OUT_OF_MEMORY;
+                }
+                state ^= STATE_QUANTIFIABLE | STATE_QUANTIFIER;
+            }
             break;
         case '\\':
             if (!(state & STATE_ESCAPE)) {
@@ -49,11 +174,13 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
                                     ->groups
                                     .data[group_idx]
                                     .size - 1
-                            ], &cur);
+                            ], &cur
+                    );
                 if (ret) {
                     return REGEX_ERR_OUT_OF_MEMORY;
                 }
                 state |= STATE_QUANTIFIABLE;
+                state &= ~STATE_QUANTIFIER;
             }
             break;
         case '.':
@@ -78,11 +205,88 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
                                 ->groups
                                 .data[group_idx]
                                 .size - 1
-                        ], &cur);
+                        ], &cur
+                );
             if (ret) {
                 return REGEX_ERR_OUT_OF_MEMORY;
             }
             state |= STATE_QUANTIFIABLE;
+            state &= ~STATE_QUANTIFIER;
+            break;
+        case '?':
+            if (state & STATE_ESCAPE) {
+                cur.type = REGEX_TOKEN_TYPE_SINGLE;
+                memset(cur.data.single.acceptable_characters, 0, 32);
+                cur.data.single.acceptable_characters['?' >> 3] |=
+                    1 << ('?' & 7);
+                state &= ~STATE_ESCAPE;
+                cur.data.single.run_length.lb = 1;
+                cur.data.single.run_length.ub = 1;
+                ret =
+                    DArrayRegexToken_push_back(
+                        &regex
+                            ->groups
+                            .data[group_idx]
+                            .data[
+                                regex
+                                    ->groups
+                                    .data[group_idx]
+                                    .size - 1
+                            ], &cur
+                    );
+                if (ret) {
+                    return REGEX_ERR_OUT_OF_MEMORY;
+                }
+                state |= STATE_QUANTIFIABLE;
+                state &= ~STATE_QUANTIFIER;
+            } else if (state & STATE_QUANTIFIER) {
+                regex
+                    ->groups
+                    .data[group_idx]
+                    .data[
+                        regex
+                            ->groups
+                            .data[group_idx]
+                            .size - 1
+                    ].data[
+                        regex
+                            ->groups
+                            .data[group_idx]
+                            .data[
+                                regex
+                                    ->groups
+                                    .data[group_idx]
+                                    .size - 1
+                            ].size - 1
+                    ].data.single.run_length.ub |= REGEX_TOKEN_RUN_LENGTH_LAZY;
+            } else {
+                if (state & STATE_QUANTIFIER) {
+                    return REGEX_ERR_DUPLICATE_QUANTIFIER;
+                }
+                regex
+                    ->groups
+                    .data[group_idx]
+                    .data[
+                        regex
+                            ->groups
+                            .data[group_idx]
+                            .size - 1
+                    ].data[
+                        regex
+                            ->groups
+                            .data[group_idx]
+                            .data[
+                                regex
+                                    ->groups
+                                    .data[group_idx]
+                                    .size - 1
+                            ].size - 1
+                    ].data.single.run_length.lb = 0;
+                if (ret) {
+                    return REGEX_ERR_OUT_OF_MEMORY;
+                }
+                state ^= STATE_QUANTIFIABLE | STATE_QUANTIFIER;
+            }
             break;
         default:
             cur.type = REGEX_TOKEN_TYPE_SINGLE;
@@ -105,7 +309,8 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
             if (ret) {
                 return REGEX_ERR_OUT_OF_MEMORY;
             }
-            state = STATE_QUANTIFIABLE;
+            state |= STATE_QUANTIFIABLE;
+            state &= ~STATE_QUANTIFIER;
             break;
         }
     }
@@ -114,7 +319,7 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
             return REGEX_ERR_TRAILING_ESCAPE;
         }
         if (state & STATE_MULTIPLE) {
-
+            return REGEX_ERR_UNBALANCED;
         }
     }
     return REGEX_ERR_OK;
