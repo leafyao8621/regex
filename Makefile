@@ -1,5 +1,5 @@
 CC = gcc
-SRC = $(wildcard src/*/*.c)
+SRC = $(wildcard src/*/*.c) $(wildcard src/*/*/*.c) $(wildcard src/*/*/*/*.c)
 OBJ = $(SRC:.c=.o)
 LIB = lib/libregex.so
 BIN = test
