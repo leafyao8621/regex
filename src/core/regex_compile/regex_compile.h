@@ -22,4 +22,26 @@ RegexErrcode regex_compile_handle_open_brace(
 RegexErrcode regex_compile_handle_close_brace(
     Regex *regex, char *state, size_t *group_idx, RegexToken *cur);
 
+RegexErrcode regex_compile_handle_plus(
+    Regex *regex, char *state, size_t *group_idx, RegexToken *cur);
+
+RegexErrcode regex_compile_handle_asterisk(
+    Regex *regex, char *state, size_t *group_idx, RegexToken *cur);
+
+RegexErrcode regex_compile_handle_backslash(
+    Regex *regex, char *state, size_t *group_idx, RegexToken *cur);
+
+RegexErrcode regex_compile_handle_dot(
+    Regex *regex, char *state, size_t *group_idx, RegexToken *cur);
+
+RegexErrcode regex_compile_handle_question(
+    Regex *regex, char *state, size_t *group_idx, RegexToken *cur);
+
+RegexErrcode regex_compile_handle_default(
+    Regex *regex,
+    char *state,
+    size_t *group_idx,
+    RegexToken *cur,
+    char **iter);
+
 #endif
