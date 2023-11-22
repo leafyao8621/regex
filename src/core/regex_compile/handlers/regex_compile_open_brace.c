@@ -1,7 +1,11 @@
 #include "../regex_compile.h"
 
 RegexErrcode regex_compile_handle_open_brace(
-    Regex *regex, char *state, size_t *group_idx, RegexToken *cur) {
+    Regex *regex,
+    short *state,
+    size_t *group_idx,
+    RegexToken *cur,
+    char *last_char) {
     int ret = 0;
     if (*state & STATE_ESCAPE) {
         if (*state & STATE_MULTIPLE) {
@@ -52,6 +56,8 @@ RegexErrcode regex_compile_handle_open_brace(
                     ].size - 1
             ].data.single.acceptable_characters['{' >> 3] |=
                 1 << ('{' & 7);
+        *last_char = '{';
+        *state &= ~STATE_MULTIPLE_START;
     } else {
         *state = STATE_REPETITION;
     }

@@ -2,10 +2,11 @@
 
 RegexErrcode regex_compile_handle_default(
     Regex *regex,
-    char *state,
+    short *state,
     size_t *group_idx,
     RegexToken *cur,
-    char **iter) {
+    char **iter,
+    char *last_char) {
     int ret = 0;
     if ((*state & STATE_MULTIPLE) && (*state & STATE_ESCAPE)) {
         return REGEX_ERR_INVALID_ESCAPE_SEQUENCE;
@@ -54,6 +55,8 @@ RegexErrcode regex_compile_handle_default(
                     ].size - 1
             ].data.single.acceptable_characters[**iter >> 3] |=
                 1 << (**iter & 7);
+        *last_char = **iter;
+        *state &= ~STATE_MULTIPLE_START;
     }
     return REGEX_ERR_OK;
 }

@@ -8,40 +8,79 @@
 #define STATE_QUANTIFIER 0x2
 #define STATE_ESCAPE 0x4
 #define STATE_MULTIPLE 0x8
-#define STATE_REPETITION 0x10
+#define STATE_MULTIPLE_START 0x10
+#define STATE_MULTIPLE_RANGE 0x20
+#define STATE_REPETITION 0x40
 
 RegexErrcode regex_compile_handle_open_bracket(
-    Regex *regex, char *state, size_t *group_idx, RegexToken *cur);
+    Regex *regex,
+    short *state,
+    size_t *group_idx,
+    RegexToken *cur,
+    char *last_char);
 
 RegexErrcode regex_compile_handle_close_bracket(
-    Regex *regex, char *state, size_t *group_idx, RegexToken *cur);
+    Regex *regex,
+    short *state,
+    size_t *group_idx,
+    RegexToken *cur,
+    char *last_char);
 
 RegexErrcode regex_compile_handle_open_brace(
-    Regex *regex, char *state, size_t *group_idx, RegexToken *cur);
+    Regex *regex,
+    short *state,
+    size_t *group_idx,
+    RegexToken *cur,
+    char *last_char);
 
 RegexErrcode regex_compile_handle_close_brace(
-    Regex *regex, char *state, size_t *group_idx, RegexToken *cur);
+    Regex *regex,
+    short *state,
+    size_t *group_idx,
+    RegexToken *cur,
+    char *last_char);
 
 RegexErrcode regex_compile_handle_plus(
-    Regex *regex, char *state, size_t *group_idx, RegexToken *cur);
+    Regex *regex,
+    short *state,
+    size_t *group_idx,
+    RegexToken *cur,
+    char *last_char);
 
 RegexErrcode regex_compile_handle_asterisk(
-    Regex *regex, char *state, size_t *group_idx, RegexToken *cur);
+    Regex *regex,
+    short *state,
+    size_t *group_idx,
+    RegexToken *cur,
+    char *last_char);
 
 RegexErrcode regex_compile_handle_backslash(
-    Regex *regex, char *state, size_t *group_idx, RegexToken *cur);
+    Regex *regex,
+    short *state,
+    size_t *group_idx,
+    RegexToken *cur,
+    char *last_char);
 
 RegexErrcode regex_compile_handle_dot(
-    Regex *regex, char *state, size_t *group_idx, RegexToken *cur);
+    Regex *regex,
+    short *state,
+    size_t *group_idx,
+    RegexToken *cur,
+    char *last_char);
 
 RegexErrcode regex_compile_handle_question(
-    Regex *regex, char *state, size_t *group_idx, RegexToken *cur);
+    Regex *regex,
+    short *state,
+    size_t *group_idx,
+    RegexToken *cur,
+    char *last_char);
 
 RegexErrcode regex_compile_handle_default(
     Regex *regex,
-    char *state,
+    short *state,
     size_t *group_idx,
     RegexToken *cur,
-    char **iter);
+    char **iter,
+    char *last_char);
 
 #endif

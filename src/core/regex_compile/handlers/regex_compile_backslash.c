@@ -1,7 +1,11 @@
 #include "../regex_compile.h"
 
 RegexErrcode regex_compile_handle_backslash(
-    Regex *regex, char *state, size_t *group_idx, RegexToken *cur) {
+    Regex *regex,
+    short *state,
+    size_t *group_idx,
+    RegexToken *cur,
+    char *last_char) {
     int ret = 0;
     if (!(*state & STATE_ESCAPE)) {
         *state |= STATE_ESCAPE;
@@ -29,6 +33,8 @@ RegexErrcode regex_compile_handle_backslash(
                     ].size - 1
             ].data.single.acceptable_characters['\\' >> 3] |=
                 1 << ('\\' & 7);
+        *last_char = '\\';
+        *state &= ~STATE_MULTIPLE_START;
     } else {
         memset(cur->data.single.acceptable_characters, 0, 32);
         cur->data.single.acceptable_characters['\\' >> 3] |=

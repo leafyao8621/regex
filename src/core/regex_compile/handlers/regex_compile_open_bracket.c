@@ -1,7 +1,11 @@
 #include "../regex_compile.h"
 
 RegexErrcode regex_compile_handle_open_bracket(
-    Regex *regex, char *state, size_t *group_idx, RegexToken *cur) {
+    Regex *regex,
+    short *state,
+    size_t *group_idx,
+    RegexToken *cur,
+    char *last_char) {
     int ret = 0;
     if (*state & STATE_ESCAPE) {
         if (*state & STATE_MULTIPLE) {
@@ -26,6 +30,8 @@ RegexErrcode regex_compile_handle_open_bracket(
                 ].data.single.acceptable_characters['[' >> 3] |=
                     1 << ('[' & 7);
             *state &= ~STATE_ESCAPE;
+            *last_char = '[';
+            *state &= ~STATE_MULTIPLE_START;
         } else {
             cur->type = REGEX_TOKEN_TYPE_SINGLE;
             memset(cur->data.single.acceptable_characters, 0, 32);
@@ -74,7 +80,7 @@ RegexErrcode regex_compile_handle_open_bracket(
         if (ret) {
             return REGEX_ERR_OUT_OF_MEMORY;
         }
-        *state = STATE_MULTIPLE;
+        *state = STATE_MULTIPLE | STATE_MULTIPLE_START;
     }
     return REGEX_ERR_OK;
 }

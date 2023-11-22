@@ -1,7 +1,11 @@
 #include "../regex_compile.h"
 
 RegexErrcode regex_compile_handle_question(
-    Regex *regex, char *state, size_t *group_idx, RegexToken *cur) {
+    Regex *regex,
+    short *state,
+    size_t *group_idx,
+    RegexToken *cur,
+    char *last_char) {
     int ret = 0;
     if (*state & STATE_ESCAPE) {
         cur->type = REGEX_TOKEN_TYPE_SINGLE;
@@ -69,6 +73,8 @@ RegexErrcode regex_compile_handle_question(
                     ].size - 1
             ].data.single.acceptable_characters['?' >> 3] |=
                 1 << ('?' & 7);
+        *last_char = '?';
+        *state &= ~STATE_MULTIPLE_START;
     } else {
         if (*state & STATE_QUANTIFIER) {
             return REGEX_ERR_DUPLICATE_QUANTIFIER;

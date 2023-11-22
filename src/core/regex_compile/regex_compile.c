@@ -10,7 +10,8 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
     }
     size_t group_idx = 0;
     char *iter = pattern;
-    char state = 0;
+    short state = 0;
+    char last_char = 0;
     RegexErrcode errcode = REGEX_ERR_OK;
     for (size_t i = 0; *iter; ++i, ++iter) {
         printf("%c 0x%02hhx\n", *iter, state);
@@ -22,7 +23,8 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
                     regex,
                     &state,
                     &group_idx,
-                    &cur
+                    &cur,
+                    &last_char
                 );
             if (errcode) {
                 return errcode;
@@ -34,7 +36,8 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
                     regex,
                     &state,
                     &group_idx,
-                    &cur
+                    &cur,
+                    &last_char
                 );
             if (errcode) {
                 return errcode;
@@ -50,7 +53,8 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
                     regex,
                     &state,
                     &group_idx,
-                    &cur
+                    &cur,
+                    &last_char
                 );
             if (errcode) {
                 return errcode;
@@ -62,7 +66,8 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
                     regex,
                     &state,
                     &group_idx,
-                    &cur
+                    &cur,
+                    &last_char
                 );
             if (errcode) {
                 return errcode;
@@ -74,7 +79,8 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
                     regex,
                     &state,
                     &group_idx,
-                    &cur
+                    &cur,
+                    &last_char
                 );
             if (errcode) {
                 return errcode;
@@ -86,7 +92,8 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
                     regex,
                     &state,
                     &group_idx,
-                    &cur
+                    &cur,
+                    &last_char
                 );
             if (errcode) {
                 return errcode;
@@ -98,7 +105,8 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
                     regex,
                     &state,
                     &group_idx,
-                    &cur
+                    &cur,
+                    &last_char
                 );
             if (errcode) {
                 return errcode;
@@ -110,7 +118,8 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
                     regex,
                     &state,
                     &group_idx,
-                    &cur
+                    &cur,
+                    &last_char
                 );
             if (errcode) {
                 return errcode;
@@ -122,7 +131,8 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
                     regex,
                     &state,
                     &group_idx,
-                    &cur
+                    &cur,
+                    &last_char
                 );
             if (errcode) {
                 return errcode;
@@ -135,7 +145,8 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
                     &state,
                     &group_idx,
                     &cur,
-                    &iter
+                    &iter,
+                    &last_char
                 );
             if (errcode) {
                 return errcode;
