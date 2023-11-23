@@ -138,6 +138,19 @@ RegexErrcode regex_compile(Regex *regex, char *pattern) {
                 return errcode;
             }
             break;
+        case '^':
+            errcode =
+                regex_compile_handle_caret(
+                    regex,
+                    &state,
+                    &group_idx,
+                    &cur,
+                    &last_char
+                );
+            if (errcode) {
+                return errcode;
+            }
+            break;
         default:
             errcode =
                 regex_compile_handle_default(

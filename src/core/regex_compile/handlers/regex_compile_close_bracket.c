@@ -9,26 +9,49 @@ RegexErrcode regex_compile_handle_close_bracket(
     int ret = 0;
     if (*state & STATE_ESCAPE) {
         if (*state & STATE_MULTIPLE) {
-            regex
-                ->groups
-                .data[*group_idx]
-                .data[
-                    regex
-                        ->groups
-                        .data[*group_idx]
-                        .size - 1
-                ].data[
-                    regex
-                        ->groups
-                        .data[*group_idx]
-                        .data[
-                            regex
-                                ->groups
-                                .data[*group_idx]
-                                .size - 1
-                        ].size - 1
-                ].data.single.acceptable_characters[']' >> 3] |=
-                    1 << (']' & 7);
+            if (!(*state & STATE_MULTIPLE_COMPLIMENT)) {
+                regex
+                    ->groups
+                    .data[*group_idx]
+                    .data[
+                        regex
+                            ->groups
+                            .data[*group_idx]
+                            .size - 1
+                    ].data[
+                        regex
+                            ->groups
+                            .data[*group_idx]
+                            .data[
+                                regex
+                                    ->groups
+                                    .data[*group_idx]
+                                    .size - 1
+                            ].size - 1
+                    ].data.single.acceptable_characters[']' >> 3] |=
+                        1 << (']' & 7);
+            } else {
+                regex
+                    ->groups
+                    .data[*group_idx]
+                    .data[
+                        regex
+                            ->groups
+                            .data[*group_idx]
+                            .size - 1
+                    ].data[
+                        regex
+                            ->groups
+                            .data[*group_idx]
+                            .data[
+                                regex
+                                    ->groups
+                                    .data[*group_idx]
+                                    .size - 1
+                            ].size - 1
+                    ].data.single.acceptable_characters[']' >> 3] &=
+                        ~(1 << (']' & 7));
+            }
             *state &= ~STATE_ESCAPE;
             *last_char = ']';
             *state &= ~STATE_MULTIPLE_START;
@@ -60,6 +83,10 @@ RegexErrcode regex_compile_handle_close_bracket(
         }
     } else if (!(*state & STATE_MULTIPLE)) {
         return REGEX_ERR_UNBALANCED;
+    } else if (
+        (*state & STATE_MULTIPLE_START) &&
+        (*state & STATE_MULTIPLE_COMPLIMENT)) {
+        return REGEX_ERR_INCOMPLETE_LIST;
     } else {
         *state = STATE_QUANTIFIABLE;
     }

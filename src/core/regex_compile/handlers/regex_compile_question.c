@@ -53,26 +53,49 @@ RegexErrcode regex_compile_handle_question(
                     ].size - 1
             ].data.single.run_length.ub |= REGEX_TOKEN_RUN_LENGTH_LAZY;
     } else if (*state & STATE_MULTIPLE) {
-        regex
-            ->groups
-            .data[*group_idx]
-            .data[
-                regex
-                    ->groups
-                    .data[*group_idx]
-                    .size - 1
-            ].data[
-                regex
-                    ->groups
-                    .data[*group_idx]
-                    .data[
-                        regex
-                            ->groups
-                            .data[*group_idx]
-                            .size - 1
-                    ].size - 1
-            ].data.single.acceptable_characters['?' >> 3] |=
-                1 << ('?' & 7);
+        if (!(*state & STATE_MULTIPLE_COMPLIMENT)) {
+            regex
+                ->groups
+                .data[*group_idx]
+                .data[
+                    regex
+                        ->groups
+                        .data[*group_idx]
+                        .size - 1
+                ].data[
+                    regex
+                        ->groups
+                        .data[*group_idx]
+                        .data[
+                            regex
+                                ->groups
+                                .data[*group_idx]
+                                .size - 1
+                        ].size - 1
+                ].data.single.acceptable_characters['?' >> 3] |=
+                    1 << ('?' & 7);
+        } else {
+            regex
+                ->groups
+                .data[*group_idx]
+                .data[
+                    regex
+                        ->groups
+                        .data[*group_idx]
+                        .size - 1
+                ].data[
+                    regex
+                        ->groups
+                        .data[*group_idx]
+                        .data[
+                            regex
+                                ->groups
+                                .data[*group_idx]
+                                .size - 1
+                        ].size - 1
+                ].data.single.acceptable_characters['?' >> 3] &=
+                    ~(1 << ('?' & 7));
+        }
         *last_char = '?';
         *state &= ~STATE_MULTIPLE_START;
     } else {

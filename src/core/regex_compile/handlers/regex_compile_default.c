@@ -8,7 +8,7 @@ RegexErrcode regex_compile_handle_default(
     char **iter,
     char *last_char) {
     int ret = 0;
-    if ((*state & STATE_MULTIPLE) && (*state & STATE_ESCAPE)) {
+    if (*state & STATE_ESCAPE) {
         return REGEX_ERR_INVALID_ESCAPE_SEQUENCE;
     }
     if (!(*state & STATE_MULTIPLE)) {
@@ -35,26 +35,49 @@ RegexErrcode regex_compile_handle_default(
         *state |= STATE_QUANTIFIABLE;
         *state &= ~STATE_QUANTIFIER;
     } else {
-        regex
-            ->groups
-            .data[*group_idx]
-            .data[
-                regex
-                    ->groups
-                    .data[*group_idx]
-                    .size - 1
-            ].data[
-                regex
-                    ->groups
-                    .data[*group_idx]
-                    .data[
-                        regex
-                            ->groups
-                            .data[*group_idx]
-                            .size - 1
-                    ].size - 1
-            ].data.single.acceptable_characters[**iter >> 3] |=
-                1 << (**iter & 7);
+        if (!(*state & STATE_MULTIPLE_COMPLIMENT)) {
+            regex
+                ->groups
+                .data[*group_idx]
+                .data[
+                    regex
+                        ->groups
+                        .data[*group_idx]
+                        .size - 1
+                ].data[
+                    regex
+                        ->groups
+                        .data[*group_idx]
+                        .data[
+                            regex
+                                ->groups
+                                .data[*group_idx]
+                                .size - 1
+                        ].size - 1
+                ].data.single.acceptable_characters[**iter >> 3] |=
+                    1 << (**iter & 7);
+        } else {
+            regex
+                ->groups
+                .data[*group_idx]
+                .data[
+                    regex
+                        ->groups
+                        .data[*group_idx]
+                        .size - 1
+                ].data[
+                    regex
+                        ->groups
+                        .data[*group_idx]
+                        .data[
+                            regex
+                                ->groups
+                                .data[*group_idx]
+                                .size - 1
+                        ].size - 1
+                ].data.single.acceptable_characters[**iter >> 3] &=
+                    ~(1 << (**iter & 7));
+        }
         *last_char = **iter;
         *state &= ~STATE_MULTIPLE_START;
     }

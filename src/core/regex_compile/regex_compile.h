@@ -9,8 +9,9 @@
 #define STATE_ESCAPE 0x4
 #define STATE_MULTIPLE 0x8
 #define STATE_MULTIPLE_START 0x10
-#define STATE_MULTIPLE_RANGE 0x20
-#define STATE_REPETITION 0x40
+#define STATE_MULTIPLE_COMPLIMENT 0x20
+#define STATE_MULTIPLE_RANGE 0x40
+#define STATE_REPETITION 0x80
 
 RegexErrcode regex_compile_handle_open_bracket(
     Regex *regex,
@@ -69,6 +70,13 @@ RegexErrcode regex_compile_handle_dot(
     char *last_char);
 
 RegexErrcode regex_compile_handle_question(
+    Regex *regex,
+    short *state,
+    size_t *group_idx,
+    RegexToken *cur,
+    char *last_char);
+
+RegexErrcode regex_compile_handle_caret(
     Regex *regex,
     short *state,
     size_t *group_idx,

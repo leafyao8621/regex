@@ -8,9 +8,10 @@ typedef enum RegexErrcode {
     REGEX_ERR_TRAILING_ESCAPE,
     REGEX_ERR_UNBALANCED,
     REGEX_ERR_DUPLICATE_QUANTIFIER,
-    REGEX_ERR_INVALID_ESCAPE_SEQUENCE
+    REGEX_ERR_INVALID_ESCAPE_SEQUENCE,
+    REGEX_ERR_INCOMPLETE_LIST
 } RegexErrcode;
 
-extern const char *regex_err_code_lookup[7];
+extern const char *regex_err_code_lookup[8];
 
 #endif
